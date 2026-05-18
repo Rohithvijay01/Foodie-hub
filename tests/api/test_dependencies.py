@@ -232,7 +232,7 @@ class TestDependencyFactories:
         feedback_service = await get_feedback_service(feedback_repo)
         assert isinstance(feedback_service, FeedbackService)
 
-        order_bid_service = await get_order_bid_service(db, order_bid_repo, order_repo, user_repo)
+        order_bid_service = await get_order_bid_service(order_bid_repo, order_repo, user_repo)
         assert isinstance(order_bid_service, OrderBidService)
 
         hotel_service = await get_hotel_service(

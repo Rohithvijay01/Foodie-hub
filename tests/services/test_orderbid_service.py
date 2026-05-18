@@ -30,7 +30,6 @@ class TestOrderBidService:
         )
 
         order_bid_service = OrderBidService(
-            db=db_session,
             orderbid_repository=order_bid_repository,
             order_repository=order_repository,
             user_repository=user_repository,
@@ -58,7 +57,6 @@ class TestOrderBidService:
         override_dependencies(order_repository=order_repository, user_repository=user_repository)
 
         order_bid_service = OrderBidService(
-            db=db_session,
             orderbid_repository=AsyncMock(),
             order_repository=order_repository,
             user_repository=user_repository,
@@ -78,7 +76,6 @@ class TestOrderBidService:
         override_dependencies(order_repository=order_repository, user_repository=user_repository)
 
         order_bid_service = OrderBidService(
-            db=db_session,
             orderbid_repository=AsyncMock(),
             order_repository=order_repository,
             user_repository=user_repository,
@@ -107,7 +104,6 @@ class TestOrderBidService:
         )
 
         order_bid_service = OrderBidService(
-            db=db_session,
             orderbid_repository=order_bid_repository,
             order_repository=order_repository,
             user_repository=user_repository,
@@ -133,7 +129,6 @@ class TestOrderBidService:
         )
 
         order_bid_service = OrderBidService(
-            db=db_session,
             orderbid_repository=order_bid_repository,
             order_repository=order_repository,
             user_repository=user_repository,
@@ -153,7 +148,6 @@ class TestOrderBidService:
         override_dependencies(order_bid_repository=order_bid_repository)
 
         order_bid_service = OrderBidService(
-            db=db_session,
             orderbid_repository=order_bid_repository,
             order_repository=AsyncMock(),
             user_repository=AsyncMock(),
@@ -170,7 +164,6 @@ class TestOrderBidService:
         override_dependencies(order_bid_repository=order_bid_repository)
 
         order_bid_service = OrderBidService(
-            db=db_session,
             orderbid_repository=order_bid_repository,
             order_repository=AsyncMock(),
             user_repository=AsyncMock(),
@@ -186,7 +179,6 @@ class TestOrderBidService:
         override_dependencies(order_bid_repository=order_bid_repository)
 
         order_bid_service = OrderBidService(
-            db=db_session,
             orderbid_repository=order_bid_repository,
             order_repository=AsyncMock(),
             user_repository=AsyncMock(),
@@ -203,7 +195,6 @@ class TestOrderBidService:
         override_dependencies(order_bid_repository=order_bid_repository)
 
         order_bid_service = OrderBidService(
-            db=db_session,
             orderbid_repository=order_bid_repository,
             order_repository=AsyncMock(),
             user_repository=AsyncMock(),
@@ -224,7 +215,6 @@ class TestOrderBidService:
         override_dependencies(order_bid_repository=order_bid_repository)
 
         order_bid_service = OrderBidService(
-            db=db_session,
             orderbid_repository=order_bid_repository,
             order_repository=AsyncMock(),
             user_repository=AsyncMock(),
@@ -248,7 +238,6 @@ class TestOrderBidService:
         override_dependencies(order_bid_repository=order_bid_repository)
 
         order_bid_service = OrderBidService(
-            db=db_session,
             orderbid_repository=order_bid_repository,
             order_repository=AsyncMock(),
             user_repository=AsyncMock(),

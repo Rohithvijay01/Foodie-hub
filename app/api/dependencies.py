@@ -23,6 +23,8 @@ from app.repositories.order_repository import OrderBidRepository, OrderRepositor
 from app.repositories.support_repository import FeedbackRepository, ReportRepository
 from app.repositories.terms_and_conditions_repository import TermsAndConditionsRepository
 from app.repositories.user_repository import UserRepository
+from app.repositories.interfaces.order import AbstractOrderBidRepository, AbstractOrderRepository
+from app.repositories.interfaces.user import AbstractUserRepository
 from app.schemas.auth.auth import CurrentUser
 from app.services.auth.service import AuthService
 from app.services.cache import CacheService
@@ -96,7 +98,7 @@ def require_roles_and_terms(
     return checker
 
 
-def get_order_repository(db: AsyncSession = Depends(get_db)) -> OrderRepository:
+def get_order_repository(db: AsyncSession = Depends(get_db)) -> AbstractOrderRepository:
     return OrderRepository(db)
 
 
@@ -108,11 +110,11 @@ def get_menu_item_repository(db: AsyncSession = Depends(get_db)) -> MenuItemRepo
     return MenuItemRepository(db)
 
 
-def get_user_repository(db: AsyncSession = Depends(get_db)) -> UserRepository:
+def get_user_repository(db: AsyncSession = Depends(get_db)) -> AbstractUserRepository:
     return UserRepository(db)
 
 
-def get_order_bid_repository(db: AsyncSession = Depends(get_db)) -> OrderBidRepository:
+def get_order_bid_repository(db: AsyncSession = Depends(get_db)) -> AbstractOrderBidRepository:
     return OrderBidRepository(db)
 
 
@@ -129,11 +131,11 @@ def get_feedback_repository(db: AsyncSession = Depends(get_db)) -> FeedbackRepos
 
 
 async def get_order_service(
-    order_repository: OrderRepository = Depends(get_order_repository),
+    order_repository: AbstractOrderRepository = Depends(get_order_repository),
     hotel_repository: HotelRepository = Depends(get_hotel_repository),
     menu_item_repository: MenuItemRepository = Depends(get_menu_item_repository),
-    user_repository: UserRepository = Depends(get_user_repository),
-    order_bid_repository: OrderBidRepository = Depends(get_order_bid_repository),
+    user_repository: AbstractUserRepository = Depends(get_user_repository),
+    order_bid_repository: AbstractOrderBidRepository = Depends(get_order_bid_repository),
 ) -> OrderService:
     return OrderService(
         order_repository=order_repository,
@@ -157,7 +159,7 @@ async def get_terms_service(
 
 
 async def get_user_service(
-    user_repository: UserRepository = Depends(get_user_repository),
+    user_repository: AbstractUserRepository = Depends(get_user_repository),
 ) -> UserService:
     return UserService(user_repository)
 
@@ -169,7 +171,7 @@ async def get_feedback_service(
 
 
 async def get_auth_service(
-    user_repository: UserRepository = Depends(get_user_repository),
+    user_repository: AbstractUserRepository = Depends(get_user_repository),
 ) -> AuthService:
     return AuthService(
         user_repo=user_repository,
@@ -182,25 +184,23 @@ async def get_auth_service(
 
 
 async def get_order_bid_service(
-    db: AsyncSession = Depends(get_db),
-    order_bid_repository: OrderBidRepository = Depends(get_order_bid_repository),
-    order_repository: OrderRepository = Depends(get_order_repository),
-    user_repository: UserRepository = Depends(get_user_repository),
+    order_bid_repository: AbstractOrderBidRepository = Depends(get_order_bid_repository),
+    order_repository: AbstractOrderRepository = Depends(get_order_repository),
+    user_repository: AbstractUserRepository = Depends(get_user_repository),
 ) -> OrderBidService:
     return OrderBidService(
-        db,
-        order_bid_repository,
-        order_repository,
-        user_repository,
+        orderbid_repository=order_bid_repository,
+        order_repository=order_repository,
+        user_repository=user_repository,
     )
 
 
 async def get_hotel_service(
-    order_repository: OrderRepository = Depends(get_order_repository),
+    order_repository: AbstractOrderRepository = Depends(get_order_repository),
     hotel_repository: HotelRepository = Depends(get_hotel_repository),
     menu_item_repository: MenuItemRepository = Depends(get_menu_item_repository),
-    user_repository: UserRepository = Depends(get_user_repository),
-    order_bid_repository: OrderBidRepository = Depends(get_order_bid_repository),
+    user_repository: AbstractUserRepository = Depends(get_user_repository),
+    order_bid_repository: AbstractOrderBidRepository = Depends(get_order_bid_repository),
 ) -> HotelService:
     return HotelService(
         order_repository,
@@ -212,11 +212,11 @@ async def get_hotel_service(
 
 
 async def get_menu_service(
-    order_repository: OrderRepository = Depends(get_order_repository),
+    order_repository: AbstractOrderRepository = Depends(get_order_repository),
     hotel_repository: HotelRepository = Depends(get_hotel_repository),
     menu_item_repository: MenuItemRepository = Depends(get_menu_item_repository),
-    user_repository: UserRepository = Depends(get_user_repository),
-    order_bid_repository: OrderBidRepository = Depends(get_order_bid_repository),
+    user_repository: AbstractUserRepository = Depends(get_user_repository),
+    order_bid_repository: AbstractOrderBidRepository = Depends(get_order_bid_repository),
 ) -> MenuService:
     return MenuService(
         order_repository,

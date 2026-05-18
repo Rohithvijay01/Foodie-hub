@@ -1,11 +1,11 @@
 from app.core.exceptions import ConflictException, ResourceNotFoundException
 from app.models.enums import UserRole
 from app.models.user import User
-from app.repositories.user_repository import UserRepository
+from app.repositories.interfaces.user import AbstractUserRepository
 
 
 class UserService:
-    def __init__(self, user_repository: UserRepository):
+    def __init__(self, user_repository: AbstractUserRepository):
         self.user_repository = user_repository
 
     async def ban_user(self, user_id: int) -> None:

@@ -17,14 +17,14 @@ from app.core.security import (
     verify_password,
 )
 from app.models.user import User
-from app.repositories.user_repository import UserRepository
+from app.repositories.interfaces.user import AbstractUserRepository
 from app.schemas.auth.auth import RegisterRequest
 
 
 class AuthService:
     def __init__(
         self,
-        user_repo: UserRepository,
+        user_repo: AbstractUserRepository,
         password_hasher: Callable[[str], str] = hash_password,
         password_verifier: Callable[[str, str], bool] = verify_password,
         token_creator: Callable[[str], str] = create_access_token,

@@ -7,9 +7,10 @@ from app.core.exceptions import ResourceNotFoundException
 from app.models.enums import UserRole
 from app.models.user import PasswordResetToken, User
 from app.repositories.base import BaseRepository
+from app.repositories.interfaces.user import AbstractUserRepository
 
 
-class UserRepository(BaseRepository):
+class UserRepository(BaseRepository, AbstractUserRepository):
     async def get_by_id(self, user_id: int) -> User | None:
         result = await self.db.scalars(select(User).where(User.id == user_id))
         return result.first()

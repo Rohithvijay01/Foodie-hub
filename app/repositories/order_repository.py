@@ -9,9 +9,10 @@ from app.models.enums import BidStatus, OrderStatus
 from app.models.hotel import Hotel
 from app.models.order import Order, OrderBid
 from app.repositories.base import BaseRepository
+from app.repositories.interfaces.order import AbstractOrderBidRepository, AbstractOrderRepository
 
 
-class OrderRepository(BaseRepository):
+class OrderRepository(BaseRepository, AbstractOrderRepository):
     async def get_by_id(self, order_id: int) -> Order | None:
         query = (
             select(Order)
@@ -155,7 +156,7 @@ class OrderRepository(BaseRepository):
         return order
 
 
-class OrderBidRepository(BaseRepository):
+class OrderBidRepository(BaseRepository, AbstractOrderBidRepository):
     async def create_bid(
         self, order_id: int, delivery_user_id: int, bid_amount: float, upi_screenshot_url: str
     ) -> OrderBid:

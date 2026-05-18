@@ -10,6 +10,8 @@ from app.core.security import generate_otp
 from app.models.enums import BidStatus, OrderStatus
 from app.models.order import Order, OrderBid
 from app.repositories.hotel_repository import HotelRepository, MenuItemRepository
+from app.repositories.interfaces.order import AbstractOrderBidRepository, AbstractOrderRepository
+from app.repositories.interfaces.user import AbstractUserRepository
 from app.repositories.order_repository import OrderBidRepository, OrderRepository
 from app.repositories.user_repository import UserRepository
 from app.schemas.consumer.orders import PlaceOrderItem
@@ -21,11 +23,11 @@ logger = logging.getLogger(__name__)
 class OrderService:
     def __init__(
         self,
-        order_repository: OrderRepository,
+        order_repository: AbstractOrderRepository,
         hotel_repository: HotelRepository,
         menu_item_repository: MenuItemRepository,
-        user_repository: UserRepository,
-        orderbid_repository: OrderBidRepository,
+        user_repository: AbstractUserRepository,
+        orderbid_repository: AbstractOrderBidRepository,
     ):
         self.order_repository = order_repository
         self.hotel_repository = hotel_repository
@@ -270,12 +272,10 @@ class OrderService:
 class OrderBidService:
     def __init__(
         self,
-        db: AsyncSession,
-        orderbid_repository: OrderBidRepository,
-        order_repository: OrderRepository,
-        user_repository: UserRepository,
+        orderbid_repository: AbstractOrderBidRepository,
+        order_repository: AbstractOrderRepository,
+        user_repository: AbstractUserRepository,
     ):
-        self.db = db
         self.orderbid_repository = orderbid_repository
         self.order_repository = order_repository
         self.user_repository = user_repository

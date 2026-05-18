@@ -351,7 +351,7 @@ class TestAuthService:
         token = SimpleNamespace(
             user_id=7,
             is_used=False,
-            expires_at=datetime.now() + timedelta(minutes=5),
+            expires_at=datetime.now(UTC).replace(tzinfo=None) + timedelta(minutes=5),
         )
         user = User(
             id=7,
