@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from datetime import datetime
 from typing import Any
 
-from app.models.enums import BidStatus, OrderStatus
+from app.models.enums import OrderStatus
 from app.models.order import Order, OrderBid
 
 

@@ -3,8 +3,6 @@ from collections.abc import Sequence
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.exceptions import ResourceNotFoundException
 from app.core.security import generate_otp
 from app.models.enums import BidStatus, OrderStatus
@@ -12,8 +10,6 @@ from app.models.order import Order, OrderBid
 from app.repositories.hotel_repository import HotelRepository, MenuItemRepository
 from app.repositories.interfaces.order import AbstractOrderBidRepository, AbstractOrderRepository
 from app.repositories.interfaces.user import AbstractUserRepository
-from app.repositories.order_repository import OrderBidRepository, OrderRepository
-from app.repositories.user_repository import UserRepository
 from app.schemas.consumer.orders import PlaceOrderItem
 
 

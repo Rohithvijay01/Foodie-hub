@@ -6,8 +6,6 @@ from app.models.hotel import MenuItem
 from app.repositories.hotel_repository import HotelRepository, MenuItemRepository
 from app.repositories.interfaces.order import AbstractOrderBidRepository, AbstractOrderRepository
 from app.repositories.interfaces.user import AbstractUserRepository
-from app.repositories.order_repository import OrderBidRepository, OrderRepository
-from app.repositories.user_repository import UserRepository
 
 
 logger = logging.getLogger(__name__)

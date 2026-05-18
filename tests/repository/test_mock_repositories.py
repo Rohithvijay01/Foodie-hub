@@ -1,9 +1,10 @@
-import datetime
 import pytest
 
 from app.models.enums import BidStatus, Departments, OrderStatus, UserRole
-from app.models.user import User
-from tests.repository.in_memory_order_repository import InMemoryOrderBidRepository, InMemoryOrderRepository
+from tests.repository.in_memory_order_repository import (
+    InMemoryOrderBidRepository,
+    InMemoryOrderRepository,
+)
 from tests.repository.in_memory_user_repository import InMemoryUserRepository
 
 
