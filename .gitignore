@@ -8,6 +8,7 @@ __pycache__/
 # C extensions
 *.so
 
+
 #pylint
 pylint_report.json
 
@@ -98,3 +99,5 @@ target/
 /site/
 .env
 .env.docker
+
+frontend/node_modules

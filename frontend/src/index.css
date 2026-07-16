@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;600;700&family=Playfair+Display+SC:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #EA580C;
+  --color-on-primary: #FFFFFF;
+  --color-secondary: #F97316;
+  --color-accent: #2563EB;
+  --color-background: #FFF7ED;
+  --color-foreground: #0F172A;
+  --color-muted: #FDF4F0;
+  --color-border: #FCEAE1;
+  --color-destructive: #DC2626;
+  --color-ring: #EA580C;
+  
+  --font-heading: "Playfair Display SC", serif;
+  --font-body: "Karla", sans-serif;
+}
+
+:root {
+  --bg-color: var(--color-background);
+  --fg-color: var(--color-foreground);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--fg-color);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
