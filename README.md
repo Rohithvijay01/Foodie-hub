@@ -20,12 +20,13 @@ A high-performance, asynchronous RESTful API built with FastAPI. This service po
 Below are screenshots of the newly redesigned University Canteen Management System:
 
 <p align="center">
-  <img src="docs/images/landing.png" alt="Landing Page" width="48%" />
-  <img src="docs/images/home.png" alt="Student Home Page" width="48%" />
+  <img width="1680" height="1050" alt="Screenshot 2026-07-17 at 10 40 56 AM" src="https://github.com/user-attachments/assets/aa9e352a-4e86-46bf-865a-381b280902cd" />
+  <img width="1680" height="1050" alt="Screenshot 2026-07-17 at 10 22 58 AM" src="https://github.com/user-attachments/assets/f71b4bd7-5cc2-4729-95bd-c342c4efa4fc" />
+
 </p>
 <p align="center">
-  <img src="docs/images/checkout.png" alt="Checkout Page" width="48%" />
-  <img src="docs/images/login.png" alt="Role Login Portal" width="48%" />
+  <img width="1680" height="1050" alt="Screenshot 2026-07-17 at 10 22 04 AM" src="https://github.com/user-attachments/assets/26e1e0e9-30f0-4bfd-9cdc-dd4ca62c5bb6" />
+<img width="1680" height="1050" alt="Screenshot 2026-07-17 at 10 22 25 AM" src="https://github.com/user-attachments/assets/45acd712-0e65-4783-a2ec-f5568e8c6d48" />
 </p>
 
 ## Architecture Overview
