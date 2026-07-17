@@ -168,7 +168,6 @@ class NotificationService:
             except asyncio.CancelledError:
                 logger.info("SSE subscription closed for user_id=%s (heartbeat-only)", user_id)
                 raise
-            return
 
         pubsub = self.redis.pubsub(ignore_subscribe_messages=True)
         await pubsub.subscribe(*channels)
