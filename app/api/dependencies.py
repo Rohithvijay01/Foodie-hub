@@ -59,14 +59,11 @@ async def get_current_user(
     db: AsyncSession = Depends(get_db),
     cache: CacheService = Depends(get_cache),
 ) -> CurrentUser:
-    if credentials:
-        token = credentials.credentials
-    else:
-        token = request.query_params.get("token")
-        
+    token = credentials.credentials if credentials else request.query_params.get("token")
+
     if not token:
         raise UnauthorizedException("Not authenticated")
-        
+
     payload = decode_token(token)
 
     user_id = extract_user_id(payload)

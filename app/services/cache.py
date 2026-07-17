@@ -1,3 +1,4 @@
+import contextlib
 from typing import TypeVar
 
 from pydantic import BaseModel
@@ -22,24 +23,18 @@ class CacheService:
             return model.model_validate_json(raw)
         except Exception:
             # corrupted cache delete
-            try:
+            with contextlib.suppress(Exception):
                 await self.redis.delete(key)
-            except Exception:
-                pass
             return None
 
     async def set_model(self, key: str, value: BaseModel, ttl: int) -> None:
         if self.redis is None:
             return
-        try:
+        with contextlib.suppress(Exception):
             await self.redis.set(key, value.model_dump_json(), ex=ttl)
-        except Exception:
-            pass
 
     async def delete(self, key: str) -> None:
         if self.redis is None:
             return
-        try:
+        with contextlib.suppress(Exception):
             await self.redis.delete(key)
-        except Exception:
-            pass

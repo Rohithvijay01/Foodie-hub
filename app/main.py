@@ -34,7 +34,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     if settings.AUTO_CREATE_TABLES:
         logger.warning("AUTO_CREATE_TABLES is enabled; creating tables from SQLAlchemy metadata")
         await init_db(Base.metadata)
-        
+
         # Seed default terms and conditions if not present
         from app.core.session import AsyncSessionLocal
         from app.repositories.terms_and_conditions_repository import TermsAndConditionsRepository
@@ -45,7 +45,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
                 if not active_terms:
                     logger.info("No active terms and conditions found. Seeding default terms.")
                     await repo.create_terms(
-                        "Welcome to Foodie Hub! By using this platform, you agree to our terms and conditions. "
+                        "Welcome to Foodie Hub! By using this platform, you agree to our "
+                        "terms and conditions. "
                         "Please treat delivery partners and mess operators with respect."
                     )
                     await session.commit()

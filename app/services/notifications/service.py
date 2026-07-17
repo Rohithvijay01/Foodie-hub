@@ -45,7 +45,10 @@ class NotificationService:
             return 0
 
         if self.redis is None:
-            logger.warning("NotificationService: Redis is unavailable. Skipping publish to channels: %s", channels)
+            logger.warning(
+                "NotificationService: Redis is unavailable. Skipping publish to channels: %s",
+                channels
+            )
             return 0
 
         pipeline = self.redis.pipeline(transaction=False)
@@ -144,7 +147,9 @@ class NotificationService:
         ]
 
         if self.redis is None:
-            logger.warning("NotificationService: Redis is unavailable. SSE running in heartbeat-only mode.")
+            logger.warning(
+                "NotificationService: Redis is unavailable. SSE running in heartbeat-only mode."
+            )
             last_heartbeat = monotonic()
             try:
                 while True:

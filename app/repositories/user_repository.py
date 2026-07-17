@@ -37,7 +37,7 @@ class UserRepository(BaseRepository, AbstractUserRepository):
             conditions.append(User.register_number == register_number)
         if mobile_number:
             conditions.append(User.mobile_number == mobile_number)
-            
+
         if conditions:
             query = query.where(or_(*conditions))
         else:
