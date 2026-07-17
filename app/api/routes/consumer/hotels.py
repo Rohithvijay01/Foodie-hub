@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Path, Query
 from app.api.dependencies import get_hotel_service, require_roles_and_terms
 from app.models.enums import UserRole
 from app.schemas.auth.auth import CurrentUser
-from app.schemas.consumer.hotel import HotelListResponse, HotelRead
+from app.schemas.consumer.hotel import HotelListResponse, HotelMenuRead, HotelRead
 from app.services.hotels.service import HotelService
 
 
@@ -36,12 +36,12 @@ async def list_hotels(
     )
 
 
-@router.get("/{hotel_id}", response_model=HotelRead)
+@router.get("/{hotel_id}", response_model=HotelMenuRead)
 async def get_hotel_details(
     hotel_id: int = Path(..., description="ID of the hotel to retrieve"),
     current_user: CurrentUser = Depends(require_roles_and_terms(UserRole.CONSUMER)),
     hotel_service: HotelService = Depends(get_hotel_service),
-) -> HotelRead:
+) -> HotelMenuRead:
     hotel = await hotel_service.get_hotel_by_id(hotel_id)
     logger.info(f"Consumer {current_user.id} retrieved details for hotel {hotel_id}")
-    return HotelRead.model_validate(hotel)
+    return HotelMenuRead.model_validate(hotel)

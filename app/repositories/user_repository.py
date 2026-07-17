@@ -26,15 +26,22 @@ class UserRepository(BaseRepository, AbstractUserRepository):
         register_number: str | None = None,
         mobile_number: str | None = None,
     ) -> User | None:
+        from sqlalchemy import or_
         query = select(User)
+        conditions = []
         if username:
-            query = query.where(User.username == username)
+            conditions.append(User.username == username)
         if email:
-            query = query.where(User.email == email)
+            conditions.append(User.email == email)
         if register_number:
-            query = query.where(User.register_number == register_number)
+            conditions.append(User.register_number == register_number)
         if mobile_number:
-            query = query.where(User.mobile_number == mobile_number)
+            conditions.append(User.mobile_number == mobile_number)
+            
+        if conditions:
+            query = query.where(or_(*conditions))
+        else:
+            return None
 
         result = await self.db.scalars(query)
         return result.first()

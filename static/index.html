@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foodie Hub | Multi-Role Food Ordering & Delivery</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- App Stylesheet -->
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <!-- Glassmorphic Global Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- App Shell -->
+    <div id="app-shell" class="app-container">
+        <!-- Top Navigation Bar -->
+        <header class="top-nav">
+            <div class="logo-area">
+                <i class="fa-solid fa-pizza-slice logo-icon"></i>
+                <span class="logo-text">Foodie<span class="highlight">Hub</span></span>
+            </div>
+            
+            <div class="nav-controls">
+                <!-- Notifications Bell -->
+                <div class="notification-wrapper" id="nav-notifications">
+                    <button class="nav-btn bell-btn" onclick="toggleNotificationsMenu()">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="badge hidden" id="notification-badge">0</span>
+                    </button>
+                    <div class="notifications-dropdown hidden" id="notifications-dropdown">
+                        <div class="dropdown-header">
+                            <h3>Live Updates</h3>
+                            <button onclick="clearNotifications()" class="clear-all-btn">Clear</button>
+                        </div>
+                        <div class="dropdown-body" id="notifications-list">
+                            <div class="empty-state">No new alerts</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Badge -->
+                <div class="user-profile-badge hidden" id="user-badge">
+                    <div class="avatar" id="user-avatar"><i class="fa-solid fa-user"></i></div>
+                    <div class="user-info">
+                        <span class="username" id="user-display-name">Username</span>
+                        <span class="user-role" id="user-display-role">Consumer</span>
+                    </div>
+                    <button class="logout-btn" onclick="handleLogout()" title="Logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Terms Acceptance Overlay -->
+        <div id="terms-modal" class="modal-overlay hidden">
+            <div class="modal-content glass-card terms-card">
+                <h2><i class="fa-solid fa-file-contract contract-icon"></i> Terms and Conditions</h2>
+                <div class="terms-text" id="terms-content">
+                    Loading terms and conditions...
+                </div>
+                <div class="terms-footer">
+                    <button class="primary-btn btn-full" onclick="handleAcceptTerms()">
+                        <i class="fa-solid fa-check"></i> I Agree and Accept the Terms
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth Forms Section -->
+        <main id="auth-section" class="main-content auth-container">
+            <div class="auth-wrapper glass-card">
+                <!-- Tab Headers -->
+                <div class="auth-tabs">
+                    <button class="auth-tab-btn active" id="tab-login" onclick="switchAuthTab('login')">Login</button>
+                    <button class="auth-tab-btn" id="tab-register" onclick="switchAuthTab('register')">Register</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form" onsubmit="submitLogin(event)">
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-user input-icon"></i>
+                            <input type="text" id="login-username" placeholder="Enter username" required autocomplete="username">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input type="password" id="login-password" placeholder="Enter password" required autocomplete="current-password">
+                        </div>
+                    </div>
+                    <button type="submit" class="primary-btn btn-full margin-t-md">
+                        Login <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <div class="auth-footer">
+                        <a href="#" onclick="showForgotPasswordModal()">Forgot Password?</a>
+                        <span class="divider">|</span>
+                        <a href="#" onclick="showResetPasswordModal()">Have reset token?</a>
+                    </div>
+                </form>
+
+                <!-- Registration Form -->
+                <form id="register-form" class="auth-form hidden" onsubmit="submitRegister(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="reg-username">Username</label>
+                            <div class="input-wrapper">
+                                <i class="fa-regular fa-user input-icon"></i>
+                                <input type="text" id="reg-username" placeholder="Alphanumeric only" required autocomplete="username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-fullname">Full Name</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-id-card input-icon"></i>
+                                <input type="text" id="reg-fullname" placeholder="John Doe" required autocomplete="name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-email">Email</label>
+                            <div class="input-wrapper">
+                                <i class="fa-regular fa-envelope input-icon"></i>
+                                <input type="email" id="reg-email" placeholder="john@example.com" required autocomplete="email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-mobile">Mobile Number</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-phone input-icon"></i>
+                                <input type="text" id="reg-mobile" placeholder="+919876543210" required autocomplete="tel">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-role">Account Type</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-user-tag input-icon"></i>
+                                <select id="reg-role" required>
+                                    <option value="consumer">Consumer (Order Food)</option>
+                                    <option value="delivery">Delivery Partner (Bid & Earn)</option>
+                                    <option value="hotel_manager">Hotel Manager (Manage Mess)</option>
+                                    <option value="admin">Administrator (System Control)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-dept">Department</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-graduation-cap input-icon"></i>
+                                <select id="reg-dept" required>
+                                    <option value="CSE">CSE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="IOT">IOT</option>
+                                    <option value="ECE">ECE</option>
+                                    <option value="MECH">MECH</option>
+                                    <option value="CIVIL">CIVIL</option>
+                                    <option value="CHEMICAL">CHEMICAL</option>
+                                    <option value="AIML">AIML</option>
+                                    <option value="AIDS">AIDS</option>
+                                    <option value="CYBER">CYBER</option>
+                                    <option value="EEE">EEE</option>
+                                    <option value="EIE">EIE</option>
+                                    <option value="BME">BME</option>
+                                    <option value="MBA">MBA</option>
+                                    <option value="OTHERS">OTHERS</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-regnumber">Register / ID Number</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-hashtag input-icon"></i>
+                                <input type="text" id="reg-regnumber" placeholder="212223240096" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-password">Password</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-lock input-icon"></i>
+                                <input type="password" id="reg-password" placeholder="Min. 8 characters" required autocomplete="new-password">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="primary-btn btn-full margin-t-md">
+                        Create Account <i class="fa-solid fa-user-plus"></i>
+                    </button>
+                </form>
+            </div>
+        </main>
+
+        <!-- Dashboard Content Panels (Dynamically Swapped) -->
+        <main id="dashboard-section" class="main-content hidden">
+            
+            <!-- 1. CONSUMER PANEL -->
+            <section id="panel-consumer" class="role-panel hidden">
+                <div class="dashboard-grid">
+                    <!-- Left Sidebar - Navigation & Actions -->
+                    <aside class="dashboard-sidebar">
+                        <div class="sidebar-menu">
+                            <button class="sidebar-link active" onclick="switchConsumerTab('browse')">
+                                <i class="fa-solid fa-utensils"></i> Browse Hotels
+                            </button>
+                            <button class="sidebar-link" onclick="switchConsumerTab('text-order')">
+                                <i class="fa-solid fa-pen-nib"></i> Text Ordering
+                            </button>
+                            <button class="sidebar-link" onclick="switchConsumerTab('history')">
+                                <i class="fa-solid fa-receipt"></i> Orders & Live Tracking
+                            </button>
+                            <button class="sidebar-link" onclick="switchConsumerTab('support')">
+                                <i class="fa-solid fa-circle-question"></i> Help & Feedback
+                            </button>
+                        </div>
+
+                        <!-- Active Shopping Cart Card -->
+                        <div class="glass-card cart-sidebar-card" id="cart-sidebar">
+                            <h3><i class="fa-solid fa-basket-shopping"></i> My Basket</h3>
+                            <div id="cart-items" class="cart-items-container">
+                                <div class="empty-state">Your basket is empty</div>
+                            </div>
+                            <div class="cart-totals">
+                                <span>Total:</span>
+                                <span id="cart-total-amount">₹0.00</span>
+                            </div>
+                            <button class="primary-btn btn-full" id="checkout-btn" disabled onclick="handlePlaceOrder()">
+                                Place Order <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </aside>
+
+                    <!-- Main Dynamic Content for Consumer -->
+                    <div class="dashboard-main-area">
+                        <!-- Browse Hotels Sub-tab -->
+                        <div id="consumer-subtab-browse" class="subtab-view">
+                            <div class="section-header">
+                                <h2>Browse Restaurants</h2>
+                                <div class="filter-bar">
+                                    <button class="filter-chip active" id="filter-all" onclick="filterHotels('all')">All</button>
+                                    <button class="filter-chip" id="filter-open" onclick="filterHotels('open')">Open Now</button>
+                                    <button class="filter-chip" id="filter-closed" onclick="filterHotels('closed')">Closed</button>
+                                </div>
+                            </div>
+                            <div class="hotels-grid" id="hotels-grid">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Text Order Sub-tab -->
+                        <div id="consumer-subtab-text-order" class="subtab-view hidden">
+                            <div class="section-header">
+                                <h2>Custom Text Order</h2>
+                                <p class="section-subtitle">Type out your custom order details. Delivery partners will place bids to deliver it.</p>
+                            </div>
+                            <div class="glass-card max-width-lg text-order-box">
+                                <form onsubmit="submitTextOrder(event)">
+                                    <div class="form-group">
+                                        <label for="text-order-desc">What do you want to order?</label>
+                                        <textarea id="text-order-desc" rows="6" placeholder="Example: 2 Masala Dosa, 1 Coffee from Woodlands Hostel Mess, delivered to block 4 room 302." required></textarea>
+                                    </div>
+                                    <button type="submit" class="primary-btn">
+                                        Submit Order for Bidding <i class="fa-solid fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Order History & Tracking Sub-tab -->
+                        <div id="consumer-subtab-history" class="subtab-view hidden">
+                            <div class="section-header">
+                                <h2>Your Orders</h2>
+                            </div>
+                            <div class="orders-list-container" id="consumer-orders-list">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Support and Feedback Sub-tab -->
+                        <div id="consumer-subtab-support" class="subtab-view hidden">
+                            <div class="section-header">
+                                <h2>Help, Feedback & Reports</h2>
+                            </div>
+                            <div class="support-grid">
+                                <!-- Feedback form -->
+                                <div class="glass-card">
+                                    <h3>Submit Feedback</h3>
+                                    <form onsubmit="submitFeedback(event)">
+                                        <div class="form-group">
+                                            <label for="feedback-content">Message</label>
+                                            <textarea id="feedback-content" rows="4" placeholder="Share your experience or suggestions..." required></textarea>
+                                        </div>
+                                        <button type="submit" class="secondary-btn">Submit Feedback</button>
+                                    </form>
+                                </div>
+                                <!-- Report form -->
+                                <div class="glass-card">
+                                    <h3>Report an Issue</h3>
+                                    <form onsubmit="submitReport(event)">
+                                        <div class="form-group">
+                                            <label for="report-title">Title / Topic</label>
+                                            <input type="text" id="report-title" placeholder="e.g. Cold food, Delayed delivery" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="report-desc">Description</label>
+                                            <textarea id="report-desc" rows="4" placeholder="Detail the issue with your order ID if applicable..." required></textarea>
+                                        </div>
+                                        <button type="submit" class="danger-btn">Submit Report</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. DELIVERY PARTNER PANEL -->
+            <section id="panel-delivery" class="role-panel hidden">
+                <div class="dashboard-grid">
+                    <!-- Left Sidebar -->
+                    <aside class="dashboard-sidebar">
+                        <div class="sidebar-menu">
+                            <button class="sidebar-link active" onclick="switchDeliveryTab('jobs')">
+                                <i class="fa-solid fa-magnifying-glass-dollar"></i> Available Orders
+                            </button>
+                            <button class="sidebar-link" onclick="switchDeliveryTab('my-bids')">
+                                <i class="fa-solid fa-gavel"></i> My Active Bids
+                            </button>
+                            <button class="sidebar-link" onclick="switchDeliveryTab('active-orders')">
+                                <i class="fa-solid fa-truck-ramp-box"></i> Active Deliveries
+                            </button>
+                        </div>
+                    </aside>
+
+                    <!-- Main Dynamic Area -->
+                    <div class="dashboard-main-area">
+                        <!-- Available Orders -->
+                        <div id="delivery-subtab-jobs" class="subtab-view">
+                            <div class="section-header">
+                                <h2>Available Bidding Jobs</h2>
+                                <p class="section-subtitle">Bids can be placed on these active orders. Place competitive bids to win delivery contracts!</p>
+                            </div>
+                            <div class="jobs-grid" id="delivery-jobs-grid">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- My Bids -->
+                        <div id="delivery-subtab-my-bids" class="subtab-view hidden">
+                            <div class="section-header">
+                                <h2>Your Active Bids</h2>
+                            </div>
+                            <div class="bids-list-container" id="delivery-bids-list">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Active Deliveries -->
+                        <div id="delivery-subtab-active-orders" class="subtab-view hidden">
+                            <div class="section-header">
+                                <h2>Ongoing Deliveries</h2>
+                            </div>
+                            <div class="deliveries-list" id="delivery-active-list">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. HOTEL MANAGER PANEL -->
+            <section id="panel-hotel_manager" class="role-panel hidden">
+                <div class="dashboard-grid">
+                    <!-- Left Sidebar -->
+                    <aside class="dashboard-sidebar">
+                        <div class="sidebar-menu">
+                            <button class="sidebar-link active" onclick="switchHotelTab('store')">
+                                <i class="fa-solid fa-store"></i> Mess Profile
+                            </button>
+                            <button class="sidebar-link" onclick="switchHotelTab('menu')">
+                                <i class="fa-solid fa-book-open"></i> Manage Menu
+                            </button>
+                            <button class="sidebar-link" onclick="switchHotelTab('orders')">
+                                <i class="fa-solid fa-kitchen-set"></i> Mess Orders
+                            </button>
+                        </div>
+                    </aside>
+
+                    <!-- Main Dynamic Area -->
+                    <div class="dashboard-main-area">
+                        <!-- Restaurant Profile / Setup -->
+                        <div id="hotel-subtab-store" class="subtab-view">
+                            <div class="section-header">
+                                <h2>Mess Profile</h2>
+                            </div>
+                            <div id="hotel-profile-container">
+                                <!-- Loaded/Managed dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Menu Management -->
+                        <div id="hotel-subtab-menu" class="subtab-view hidden">
+                            <div class="section-header">
+                                <h2>Manage Menu Items</h2>
+                                <button class="primary-btn" onclick="openAddMenuItemModal()">
+                                    <i class="fa-solid fa-plus"></i> Add Menu Item
+                                </button>
+                            </div>
+                            <div class="glass-card list-table-container">
+                                <table class="app-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Item Name</th>
+                                            <th>Description</th>
+                                            <th>Price (₹)</th>
+                                            <th>Availability</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="hotel-menu-table-body">
+                                        <!-- Loaded dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Kitchen Orders -->
+                        <div id="hotel-subtab-orders" class="subtab-view hidden">
+                            <div class="section-header">
+                                <h2>Incoming & Active Orders</h2>
+                            </div>
+                            <div class="orders-list-container" id="hotel-orders-list">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. ADMINISTRATOR PANEL -->
+            <section id="panel-admin" class="role-panel hidden">
+                <div class="dashboard-grid">
+                    <!-- Left Sidebar -->
+                    <aside class="dashboard-sidebar">
+                        <div class="sidebar-menu">
+                            <button class="sidebar-link active" onclick="switchAdminTab('users')">
+                                <i class="fa-solid fa-users-gear"></i> User Directory
+                            </button>
+                            <button class="sidebar-link" onclick="switchAdminTab('issues')">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Support Reports
+                            </button>
+                            <button class="sidebar-link" onclick="switchAdminTab('terms')">
+                                <i class="fa-solid fa-signature"></i> Configure Terms
+                            </button>
+                        </div>
+                    </aside>
+
+                    <!-- Main Dynamic Area -->
+                    <div class="dashboard-main-area">
+                        <!-- User Directory -->
+                        <div id="admin-subtab-users" class="subtab-view">
+                            <div class="section-header">
+                                <h2>Manage User Directory</h2>
+                                <div class="filter-bar">
+                                    <select id="admin-user-filter-role" onchange="loadAdminUsers()">
+                                        <option value="">All Roles</option>
+                                        <option value="consumer">Consumer</option>
+                                        <option value="delivery">Delivery Partner</option>
+                                        <option value="hotel_manager">Hotel Manager</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                    <select id="admin-user-filter-status" onchange="loadAdminUsers()">
+                                        <option value="">All Statuses</option>
+                                        <option value="active">Active Only</option>
+                                        <option value="banned">Banned Only</option>
+                                    </select>
+                                    <input type="text" id="admin-user-search" placeholder="Search users..." oninput="loadAdminUsers()">
+                                </div>
+                            </div>
+                            <div class="glass-card list-table-container">
+                                <table class="app-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Full Name</th>
+                                            <th>Username</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Mobile</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-users-table-body">
+                                        <!-- Loaded dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Support Reports & Feedback -->
+                        <div id="admin-subtab-issues" class="subtab-view hidden">
+                            <div class="section-header">
+                                <h2>User Issues & Reports</h2>
+                            </div>
+                            <div class="admin-issues-container" id="admin-issues-list">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Terms & Conditions Configuration -->
+                        <div id="admin-subtab-terms" class="subtab-view hidden">
+                            <div class="section-header">
+                                <h2>Update Terms & Conditions</h2>
+                            </div>
+                            <div class="glass-card max-width-lg">
+                                <form onsubmit="submitUpdateTerms(event)">
+                                    <div class="form-group">
+                                        <label for="admin-terms-title">Document Title</label>
+                                        <input type="text" id="admin-terms-title" placeholder="e.g. Standard Terms of Service v2.0" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="admin-terms-content">Full Terms Content (HTML supported)</label>
+                                        <textarea id="admin-terms-content" rows="12" placeholder="Write terms and conditions content here..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="primary-btn">
+                                        Publish Terms Update <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- GLOBAL DYNAMIC MODALS -->
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-pass-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card form-modal">
+            <div class="modal-header">
+                <h2>Reset Password Request</h2>
+                <button class="close-btn" onclick="closeForgotPasswordModal()">&times;</button>
+            </div>
+            <form onsubmit="submitForgotPassword(event)">
+                <div class="form-group">
+                    <label for="forgot-username">Username or Email</label>
+                    <input type="text" id="forgot-username" placeholder="Enter username or email address" required>
+                </div>
+                <button type="submit" class="primary-btn btn-full margin-t-md">Send Reset Instructions</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Complete Reset Password Modal (when they have token) -->
+    <div id="reset-pass-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card form-modal">
+            <div class="modal-header">
+                <h2>Set New Password</h2>
+                <button class="close-btn" onclick="closeResetPasswordModal()">&times;</button>
+            </div>
+            <form onsubmit="submitResetPassword(event)">
+                <div class="form-group">
+                    <label for="reset-token">Token</label>
+                    <input type="text" id="reset-token" placeholder="Enter security token" required>
+                </div>
+                <div class="form-group">
+                    <label for="reset-new-password">New Password</label>
+                    <input type="password" id="reset-new-password" placeholder="At least 8 characters" required>
+                </div>
+                <button type="submit" class="primary-btn btn-full margin-t-md">Update Password</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Hotel Details & Menu Modal (for Consumers) -->
+    <div id="hotel-details-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card hotel-details-card">
+            <div class="modal-header">
+                <div class="hotel-title-area">
+                    <h2 id="modal-hotel-name">Woodlands Mess</h2>
+                    <span id="modal-hotel-status" class="status-badge">Open</span>
+                </div>
+                <button class="close-btn" onclick="closeHotelDetailsModal()">&times;</button>
+            </div>
+            <p id="modal-hotel-desc" class="hotel-modal-description">Hotel description goes here.</p>
+            
+            <div class="menu-section">
+                <h3>Our Menu</h3>
+                <div class="menu-list" id="modal-menu-list">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Bids Modal (for Consumers) -->
+    <div id="order-bids-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card bids-modal-card">
+            <div class="modal-header">
+                <h2>Delivery Agent Bids</h2>
+                <button class="close-btn" onclick="closeOrderBidsModal()">&times;</button>
+            </div>
+            <div class="bids-list" id="modal-bids-list">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Menu Item Modal (for Hotel Managers) -->
+    <div id="menu-item-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card form-modal">
+            <div class="modal-header">
+                <h2 id="menu-item-modal-title">Add Menu Item</h2>
+                <button class="close-btn" onclick="closeMenuItemModal()">&times;</button>
+            </div>
+            <form onsubmit="submitMenuItemForm(event)" id="menu-item-form">
+                <input type="hidden" id="menu-item-id">
+                <div class="form-group">
+                    <label for="menu-item-name">Item Name</label>
+                    <input type="text" id="menu-item-name" placeholder="e.g. Masala Dosa" required>
+                </div>
+                <div class="form-group">
+                    <label for="menu-item-desc">Description</label>
+                    <textarea id="menu-item-desc" rows="3" placeholder="e.g. Crispy rice crepe with potato masala" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="menu-item-price">Price (₹)</label>
+                    <input type="number" id="menu-item-price" step="0.01" min="0" placeholder="e.g. 80.00" required>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="menu-item-available" checked>
+                    <label for="menu-item-available">Available for ordering</label>
+                </div>
+                <button type="submit" class="primary-btn btn-full margin-t-md" id="menu-item-submit-btn">Add Item</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delivery Bid Placement Modal (for Delivery agents) -->
+    <div id="delivery-bid-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card form-modal">
+            <div class="modal-header">
+                <h2>Place Delivery Bid</h2>
+                <button class="close-btn" onclick="closeDeliveryBidModal()">&times;</button>
+            </div>
+            <form onsubmit="submitDeliveryBid(event)">
+                <input type="hidden" id="bid-order-id">
+                <div class="form-group">
+                    <label for="bid-amount">Bid Amount (₹)</label>
+                    <input type="number" id="bid-amount" step="0.1" min="1" placeholder="e.g. 40.00" required>
+                </div>
+                <div class="form-group">
+                    <label for="bid-screenshot">UPI QR Code or Payment Screenshot URL</label>
+                    <input type="url" id="bid-screenshot" placeholder="Paste URL of UPI screenshot (required)" required>
+                </div>
+                <button type="submit" class="primary-btn btn-full margin-t-md">Submit Bid</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delivery Fulfillment OTP Modal (for Delivery agents) -->
+    <div id="delivery-otp-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card form-modal">
+            <div class="modal-header">
+                <h2>Confirm Delivery</h2>
+                <button class="close-btn" onclick="closeDeliveryOtpModal()">&times;</button>
+            </div>
+            <form onsubmit="submitDeliveryOtp(event)">
+                <input type="hidden" id="otp-order-id">
+                <div class="form-group">
+                    <label for="delivery-otp-input">Enter OTP from Consumer</label>
+                    <input type="text" id="delivery-otp-input" placeholder="e.g. 529384" required autocomplete="one-time-code">
+                </div>
+                <button type="submit" class="primary-btn btn-full margin-t-md">Deliver Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</body>
+</html>

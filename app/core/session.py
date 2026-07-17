@@ -32,7 +32,7 @@ async def init_db(base_metadata: MetaData) -> None:
         await conn.run_sync(base_metadata.create_all)
 
 
-async def init_redis(url: str) -> Redis:
+async def init_redis(url: str) -> Redis | None:
     client = Redis.from_url(
         url,
         encoding="utf-8",
@@ -46,15 +46,15 @@ async def init_redis(url: str) -> Redis:
         logger.info("Successfully connected to Redis")
         return client
     except Exception as e:
-        logger.error(f"Failed to connect to Redis: {e}")
-        raise RuntimeError("Could not connect to Redis") from e
+        logger.warning(f"Redis unavailable at startup: {e}")
+        return None
 
 
-def get_redis(request: Request) -> Redis:
-    return cast(Redis, request.app.state.redis)
+def get_redis(request: Request) -> Redis | None:
+    return getattr(request.app.state, "redis", None)
 
 
-async def get_cache(redis: Redis = Depends(get_redis)) -> CacheService:
+async def get_cache(redis: Redis | None = Depends(get_redis)) -> CacheService:
     return CacheService(redis)
 
 
@@ -69,8 +69,12 @@ async def check_db_connection() -> bool:
 
 
 async def check_redis_connection(app: FastAPI) -> bool:
+    redis_client = getattr(getattr(app, "state", None), "redis", None)
+    if redis_client is None:
+        return False
+
     try:
-        await app.state.redis.ping()
+        await redis_client.ping()
         return True
     except Exception as e:
         logger.error(f"Redis connection check failed: {e}")

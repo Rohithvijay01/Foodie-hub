@@ -89,11 +89,9 @@ class RedisRateLimiterMiddleware(BaseHTTPMiddleware):
         redis = getattr(redis, "redis", None) if redis else None
 
         if redis is None:
-            # Redis not wired up — log loudly and fail open
-            logger.error(
-                "RedisRateLimiterMiddleware: app.state.redis is not set. "
-                "Initialise the connection pool in your app lifespan and assign "
-                "it to app.state.redis. Rate limiting is DISABLED for this request."
+            # Redis not wired up — rate limiting is DISABLED silently
+            logger.debug(
+                "RedisRateLimiterMiddleware: app.state.redis is not set. Rate limiting is DISABLED."
             )
             return await call_next(request)
 

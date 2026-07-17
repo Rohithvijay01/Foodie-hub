@@ -15,6 +15,15 @@ A high-performance, asynchronous RESTful API built with FastAPI. This service po
 * **Automated Data Validation:** Strict request/response contracts enforced via Pydantic v2.
 * **Developer Ergonomics:** Automated API documentation (Swagger/ReDoc), Dockerized environments, and comprehensive CI/CD pipelines.
 
+## User Interface
+
+Below are screenshots of the registration and login screens of Foodie Hub:
+
+<p align="center">
+  <img src="docs/images/register.png" alt="Registration Screen" width="48%" />
+  <img src="docs/images/login.png" alt="Login Screen" width="48%" />
+</p>
+
 ## Architecture Overview
 
 ```mermaid
@@ -61,29 +70,60 @@ Copy the example configuration file to establish your local environment:
 cp .env.example .env
 ```
 
-## Local Development (Quick Start)
+## Local Development
 
-**1. Install dependencies via uv**
+The project is designed to run easily in several environments depending on what infrastructure is available. First, copy the template `.env.example` file to create your local `.env`:
 ```bash
-uv sync --dev
+cp .env.example .env
 ```
 
-**2. Initialize the database schema**
-```bash
-uv run alembic upgrade head
-```
-*(Optional: For a temporary SQLite database, use `ALEMBIC_DATABASE_URL=sqlite+aiosqlite:///./alembic_local.db uv run alembic upgrade head`)*
+### Option 1: Running Locally (Zero Setup — No Docker / No Redis)
+Ideal for quick frontend/backend changes without running Docker Desktop.
+1. **Sync dependencies using uv:**
+   ```bash
+   uv sync --dev
+   ```
+2. **Start the ASGI server:**
+   ```bash
+   uv run uvicorn app.main:app --reload
+   ```
+   *Note: In this mode, the application uses an in-memory SQLite database and automatically initializes tables and seeds terms and conditions (since `AUTO_CREATE_TABLES=true` is enabled in `.env`). It detects that Redis is unavailable and automatically falls back to run cache-less and disables rate-limiting without log spam.*
 
-`AUTO_CREATE_TABLES` defaults to `false` to avoid conflicts with Alembic. Enable it only for temporary/local bootstrap workflows.
+### Option 2: Running Locally with Redis (Caching + SSE Notifications)
+Enable full real-time Server-Sent Events (SSE) notification streaming and caching by starting Redis via Docker while running the app locally.
+1. **Start Redis container (port 6379 is exposed):**
+   ```bash
+   docker compose up -d redis
+   ```
+2. **Start the backend:**
+   ```bash
+   uv run uvicorn app.main:app --reload
+   ```
 
-**3. Launch the ASGI server**
-```bash
-uv run uvicorn app.main:app --reload
-```
+### Option 3: Running the Full Stack (PostgreSQL + Redis + Backend + Frontend)
+Run the entire production-like environment with full services in Docker.
+1. **Configure Docker environment:**
+   Ensure `.env` contains settings for database credentials (default values in `.env` are already configured):
+   ```env
+   POSTGRES_USER=foodie_user
+   POSTGRES_PASSWORD=foodie_password
+   POSTGRES_DB=foodie_db
+   DATABASE_URL="postgresql+asyncpg://foodie_user:foodie_password@db:5432/foodie_db"
+   ```
+2. **Launch all services:**
+   ```bash
+   # Build and start all services in detached mode
+   docker compose up -d --build
+   ```
+3. **Execute database migrations within the container:**
+   ```bash
+   docker compose run --rm app alembic upgrade head
+   ```
 
 **Service Endpoints:**
-* API Base: `http://127.0.0.1:8000/api/v1`
-* Swagger UI: `http://127.0.0.1:8000/docs`
+* Frontend app (via FastAPI static files): [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+* API Base: [http://127.0.0.1:8000/api/v1](http://127.0.0.1:8000/api/v1)
+* Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 * Health Check: `GET http://127.0.0.1:8000/health`
 
 ## System Performance & Benchmarks

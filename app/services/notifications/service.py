@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class NotificationService:
-    def __init__(self, redis: Redis):
+    def __init__(self, redis: Redis | None):
         self.redis = redis
         self.prefix = settings.NOTIFICATION_CHANNEL_PREFIX
 
@@ -42,6 +42,10 @@ class NotificationService:
 
     async def _publish_to_channels(self, channels: list[str], payload: str) -> int:
         if not channels:
+            return 0
+
+        if self.redis is None:
+            logger.warning("NotificationService: Redis is unavailable. Skipping publish to channels: %s", channels)
             return 0
 
         pipeline = self.redis.pipeline(transaction=False)
@@ -138,6 +142,28 @@ class NotificationService:
             self._role_channel(role),
             *[self._group_channel(group_name) for group_name in unique_groups],
         ]
+
+        if self.redis is None:
+            logger.warning("NotificationService: Redis is unavailable. SSE running in heartbeat-only mode.")
+            last_heartbeat = monotonic()
+            try:
+                while True:
+                    if monotonic() - last_heartbeat >= settings.SSE_HEARTBEAT_SECONDS:
+                        heartbeat_payload = {
+                            "sent_at": datetime.now(UTC).isoformat(),
+                            "kind": "heartbeat",
+                        }
+                        yield {
+                            "event": "heartbeat",
+                            "retry": settings.SSE_RETRY_MS,
+                            "data": json.dumps(heartbeat_payload),
+                        }
+                        last_heartbeat = monotonic()
+                    await asyncio.sleep(0.5)
+            except asyncio.CancelledError:
+                logger.info("SSE subscription closed for user_id=%s (heartbeat-only)", user_id)
+                raise
+            return
 
         pubsub = self.redis.pubsub(ignore_subscribe_messages=True)
         await pubsub.subscribe(*channels)

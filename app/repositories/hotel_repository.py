@@ -1,4 +1,5 @@
 from sqlalchemy import func, select
+from sqlalchemy.orm import selectinload
 
 from app.models.hotel import Hotel, MenuItem
 from app.repositories.base import BaseRepository
@@ -6,7 +7,11 @@ from app.repositories.base import BaseRepository
 
 class HotelRepository(BaseRepository):
     async def get_hotel_by_id(self, hotel_id: int) -> Hotel | None:
-        result = await self.db.scalars(select(Hotel).where(Hotel.id == hotel_id))
+        result = await self.db.scalars(
+            select(Hotel)
+            .where(Hotel.id == hotel_id)
+            .options(selectinload(Hotel.menu_items))
+        )
         return result.first()
 
     async def list_hotels(

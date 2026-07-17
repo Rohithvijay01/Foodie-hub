@@ -83,15 +83,14 @@ async def test_init_redis_success():
 
 
 @pytest.mark.asyncio
-async def test_init_redis_failure_raises_runtime_error():
+async def test_init_redis_failure_returns_none():
     client = AsyncMock()
     client.ping = AsyncMock(side_effect=RuntimeError("cannot ping"))
 
-    with (
-        patch.object(session.Redis, "from_url", return_value=client),
-        pytest.raises(RuntimeError, match="Could not connect to Redis"),
-    ):
-        await session.init_redis("redis://localhost:6379/0")
+    with patch.object(session.Redis, "from_url", return_value=client):
+        result = await session.init_redis("redis://localhost:6379/0")
+
+    assert result is None
 
 
 @pytest.mark.asyncio
@@ -121,6 +120,15 @@ async def test_get_redis_and_get_cache():
 
     assert returned_redis is redis
     assert isinstance(cache, CacheService)
+
+
+@pytest.mark.asyncio
+async def test_check_redis_connection_without_client_returns_false():
+    app = FastAPI()
+
+    ok = await session.check_redis_connection(app)
+
+    assert ok is False
 
 
 @pytest.mark.asyncio

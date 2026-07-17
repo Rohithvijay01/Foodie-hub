@@ -36,7 +36,11 @@ class Settings(BaseSettings):
     SSE_POLL_TIMEOUT_SECONDS: float = 1.0
     SSE_MAX_GROUPS_PER_CONNECTION: int = 20
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
     @model_validator(mode="after")
     def validate_secret_key_for_production(self) -> "Settings":

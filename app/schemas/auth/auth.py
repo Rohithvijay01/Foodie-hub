@@ -122,7 +122,9 @@ class ResetPasswordRequest(BaseModel):
 
 
 class TermsRead(BaseModel):
-    version: str = Field(description="Terms version", title="Version")
+    model_config = ConfigDict(from_attributes=True)
+
+    version: int | str = Field(description="Terms version", title="Version")
     content: str = Field(description="Terms content", title="Content")
 
 

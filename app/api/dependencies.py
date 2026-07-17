@@ -1,7 +1,7 @@
 from collections.abc import Awaitable, Callable
 from typing import Any
 
-from fastapi import Depends
+from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -38,7 +38,7 @@ from app.services.terms.service import TermsService
 from app.services.users.service import UserService
 
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 CACHE_TTL_SECONDS = 1300  # 30 minutes
 
@@ -54,11 +54,19 @@ def extract_user_id(payload: dict[str, Any] | None) -> int:
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    request: Request,
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
     db: AsyncSession = Depends(get_db),
     cache: CacheService = Depends(get_cache),
 ) -> CurrentUser:
-    token = credentials.credentials  # Implement your token decoding logic here
+    if credentials:
+        token = credentials.credentials
+    else:
+        token = request.query_params.get("token")
+        
+    if not token:
+        raise UnauthorizedException("Not authenticated")
+        
     payload = decode_token(token)
 
     user_id = extract_user_id(payload)
@@ -228,6 +236,6 @@ async def get_menu_service(
 
 
 async def get_notification_service(
-    redis: Redis = Depends(get_redis),
+    redis: Redis | None = Depends(get_redis),
 ) -> NotificationService:
     return NotificationService(redis)

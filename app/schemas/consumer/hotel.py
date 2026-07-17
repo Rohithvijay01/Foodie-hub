@@ -28,5 +28,5 @@ class MenuItemRead(BaseModel):
 class HotelMenuRead(HotelRead):
     model_config = {"from_attributes": True}
     menu_items: list[MenuItemRead] = Field(
-        ..., description="List of menu items available at the hotel"
+        default=[], description="List of menu items available at the hotel"
     )
