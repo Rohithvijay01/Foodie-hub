@@ -39,6 +39,10 @@ dev = [
   "pytest-env>=1.6.0",
 ]
 
+[tool.setuptools.packages.find]
+include = ["app*"]
+exclude = ["alembic*", "tests*"]
+
 [project.scripts]
 foodie-seed = "app.utils.seed:main"
 
