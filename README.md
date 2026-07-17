@@ -17,11 +17,15 @@ A high-performance, asynchronous RESTful API built with FastAPI. This service po
 
 ## User Interface
 
-Below are screenshots of the registration and login screens of Foodie Hub:
+Below are screenshots of the newly redesigned University Canteen Management System:
 
 <p align="center">
-  <img src="docs/images/register.png" alt="Registration Screen" width="48%" />
-  <img src="docs/images/login.png" alt="Login Screen" width="48%" />
+  <img src="docs/images/landing.png" alt="Landing Page" width="48%" />
+  <img src="docs/images/home.png" alt="Student Home Page" width="48%" />
+</p>
+<p align="center">
+  <img src="docs/images/checkout.png" alt="Checkout Page" width="48%" />
+  <img src="docs/images/login.png" alt="Role Login Portal" width="48%" />
 </p>
 
 ## Architecture Overview
