@@ -54,12 +54,16 @@ def extract_user_id(payload: dict[str, Any] | None) -> int:
 
 
 async def get_current_user(
-    request: Request,
+    request: Request = None,  # type: ignore
     credentials: HTTPAuthorizationCredentials | None = Depends(security),
     db: AsyncSession = Depends(get_db),
     cache: CacheService = Depends(get_cache),
 ) -> CurrentUser:
-    token = credentials.credentials if credentials else request.query_params.get("token")
+    token = (
+        credentials.credentials
+        if credentials
+        else (request.query_params.get("token") if request else None)
+    )
 
     if not token:
         raise UnauthorizedException("Not authenticated")
